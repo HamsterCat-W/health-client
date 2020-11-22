@@ -19,6 +19,7 @@ export default {
 #app {
   height: 100%;
 }
+
 </style>
 
 <style>
@@ -43,6 +44,10 @@ export default {
 }
 .ant-table-bordered .ant-table-thead > tr:not(:last-child) > th {
   border-bottom: 1px solid #ccc !important;
+}
+
+button.ant-btn.ant-btn-primary.ant-btn-round.ant-btn-block:hover{
+background:#000033;
 }
 </style>
 
