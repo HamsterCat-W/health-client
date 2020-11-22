@@ -6,6 +6,9 @@
         <div class="logo" align="center">
           <img src="/image/logo.png" alt="健康平台logo" />
         </div>
+        <div class="title">
+          <b>个人健康平台</b>
+        </div>
         <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
           <a-form-model-item has-feedback label="用户名" prop="user">
             <a-input v-model="ruleForm.username" type="text" autocomplete="off" name="username" />
@@ -117,7 +120,7 @@ img {
 }
 
 .container {
-margin: 40px;
+  margin: 40px;
 }
 
 .form {
@@ -136,5 +139,14 @@ margin: 40px;
 
 button.ant-btn.ant-btn-primary.ant-btn-round.ant-btn-block {
   background: #57b846;
+}
+
+.title {
+  width: 100%;
+  text-align: center;
+  position: relative;
+  top: -100px;
+  font-size: 25px;
+  margin-top: 70px;
 }
 </style>
