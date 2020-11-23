@@ -6,15 +6,13 @@
         <div class="logo" align="center">
           <img src="/image/logo.png" alt="健康平台logo" />
         </div>
-        <div class="title">
-          <b>个人健康平台</b>
-        </div>
-        <a-form-model ref="ruleForm" :model="ruleForm" :rules="rules" v-bind="layout">
-          <a-form-model-item has-feedback label="用户名" prop="user">
+        <b class="title">个人健康平台</b>
+        <a-form-model ref="ruleForm" :model="ruleForm" v-bind="layout">
+          <a-form-model-item has-feedback label="用户名">
             <a-input v-model="ruleForm.username" type="text" autocomplete="off" name="username" />
           </a-form-model-item>
 
-          <a-form-model-item has-feedback label="密 码" prop="pass">
+          <a-form-model-item has-feedback label="密 码">
             <a-input
               v-model="ruleForm.password"
               type="password"
@@ -28,7 +26,7 @@
               block
               shape="round"
               :disabled="ruleForm.username === '' || ruleForm.password === ''"
-              @click="submitForm('ruleForm')"
+              @click="submitForm"
             >登录</a-button>
           </a-form-model-item>
           <a-form-model-item :wrapper-col="{ span: 8, offset: 8}">
@@ -44,32 +42,12 @@
 <script>
 export default {
   data() {
-    let validateUsername = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the username"));
-      } else {
-        callback();
-      }
-    };
-
-    let validatePassword = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the password"));
-      } else {
-        callback();
-      }
-    };
-
     return {
       ruleForm: {
         username: "",
         password: "",
       },
       register: "register",
-      rules: {
-        user: [{ validator: validateUsername, trigger: "change" }],
-        pass: [{ validator: validatePassword, trigger: "change" }],
-      },
       layout: {
         labelCol: { span: 8 },
         wrapperCol: { span: 8 },
@@ -77,15 +55,9 @@ export default {
     };
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    submitForm() {
+      // 获取表单数据
+      console.log(this.ruleForm);
     },
     Register(event) {
       // console.log(event);
@@ -145,7 +117,6 @@ button.ant-btn.ant-btn-primary.ant-btn-round.ant-btn-block {
   width: 100%;
   text-align: center;
   position: relative;
-  top: -100px;
   font-size: 25px;
   margin-top: 70px;
 }
