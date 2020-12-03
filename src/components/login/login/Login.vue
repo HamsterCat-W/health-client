@@ -55,8 +55,7 @@ export default {
     };
   },
   methods: {
-    submitForm() {
-      // 获取表单数据
+    submitForm(event) {
       console.log(this.ruleForm);
     },
     Register(event) {

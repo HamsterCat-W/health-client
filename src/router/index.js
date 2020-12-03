@@ -50,7 +50,18 @@ const routes = [
     path: "/admin",
     name: "admin",
     component: AdminRouter,
+    redirect: "/admin/superUser",
     children: [
+      {
+        path: "normalUser",
+        name: "admin_normalUser",
+        component: NormalUser,
+      },
+      {
+        path: "superUser",
+        name: "admin_superUser",
+        component: SuperUser,
+      },
       {
         path: "energyAnalyse",
         name: "admin_energy_analyse",
@@ -77,17 +88,8 @@ const routes = [
     path: "/customer",
     name: "customer",
     component: CustomerRouter,
+    redirect: "/customer/myCondition",
     children: [
-      {
-        path: "normalUser",
-        name: "admin_normalUser",
-        component: NormalUser,
-      },
-      {
-        path: "superUser",
-        name: "admin_superUser",
-        component: SuperUser,
-      },
       {
         path: "energyAnalyse",
         name: "customer_energy_analyse",

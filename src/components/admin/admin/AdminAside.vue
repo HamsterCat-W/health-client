@@ -33,7 +33,7 @@
       </a-menu-item>
       <a-menu-item key="admin_energy_analyse">
         <a-icon type="usergroup-add" />
-        <span>今日食物热量分析</span>
+        <span>今日食物分析</span>
       </a-menu-item>
       <a-menu-item key="admin_food_recommend">
         <a-icon type="usergroup-add" />

@@ -20,6 +20,9 @@ export default {
   height: 100%;
 }
 
+.content {
+  margin: 10px;
+}
 </style>
 
 <style>
@@ -46,9 +49,9 @@ export default {
   border-bottom: 1px solid #ccc !important;
 }
 
-button.ant-btn.ant-btn-primary.ant-btn-round.ant-btn-block:hover{
-background:#000033;
+button.ant-btn.ant-btn-primary.ant-btn-round.ant-btn-block:hover {
+  background: #000033;
 }
 </style>
 
-styl
+
