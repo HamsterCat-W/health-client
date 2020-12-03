@@ -26,7 +26,7 @@
       <a-col :span="12">
         <a-card title="我的身体状况">
           <p v-for="(item, index) in myState" :key="index">
-            {{ item.name }}：{{ item.value }}
+            {{ item.name }}：{{ condition[item.key] }}
           </p>
         </a-card>
       </a-col>
@@ -40,41 +40,46 @@ const myState = [
   {
     name: "BMI指数",
     key: "bmi",
-    value: "20.30",
   },
   {
     name: "正常BMI指数",
     key: "normbmi",
-    value: "18.5~23.9",
   },
   {
     name: "理想体重",
     key: "idealweight",
-    value: "68",
   },
   {
     name: "健康水平",
     key: "level",
-    value: "正常范围",
   },
   {
     name: "相关疾病发病的危险",
     key: "danger",
-    value: "平均水平",
   },
   {
     name: "是否正常",
     key: "status",
-    value: "是",
   },
 ];
+
+const condition = {
+  bmi: 20.3,
+  normbmi: "18.5～23.9",
+  idealweight: 68,
+  level: "正常范围",
+  danger: "平均水平",
+  status: "是",
+};
 export default {
   data() {
     return {
       labelCol: { span: 4 },
       wrapperCol: { span: 8 },
       myState,
+      condition,
       state: 0,
+      statusTesx: "",
       form: {
         sex: "男",
         height: 175,
@@ -84,20 +89,35 @@ export default {
   },
   methods: {
     async onSubmit() {
-      // let url = `/weight/bmi?appkey=ce4390a7c71a973e&sex=${this.form.sex}&height=${this.form.height}&weight=${this.form.weight}`;
-      // console.log(this.form.weight);
-      let url =
-        "https://api.jisuapi.com/weight/bmi?appkey=ce4390a7c71a973e&sex=男&height=172&weight=60";
       let that = this;
+      axios
+        .get(
+          `/condition/weight/bmi?appkey=ce4390a7c71a973e&sex=${this.form.sex}&height=${this.form.height}&weight=${this.form.weight}`
+        )
+        .then(
+          function (response) {
+            console.log(response);
+            console.log(response.data.result);
+            let data = response.data.result;
 
-      axios.get(url).then(
-        function (response) {
-          console.log(response);
-        },
-        function (err) {
-          console.log(err);
-        }
-      );
+            that.condition.bmi = data.bmi;
+            that.condition.normbmi = data.normbmi;
+            that.condition.idealweight = data.idealweight;
+            that.condition.level = data.level;
+            that.condition.danger = data.danger;
+            if (data.status === 1) {
+              that.condition.status = "健康";
+            } else {
+              that.condition.status = "亚健康";
+            }
+            if (response.statusText === "OK") {
+              that.$message.success("查询成功", 10);
+            }
+          },
+          function (err) {
+            console.log(err);
+          }
+        );
     },
   },
 };
