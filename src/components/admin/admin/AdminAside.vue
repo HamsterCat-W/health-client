@@ -44,13 +44,17 @@
 </template>
 
 <script>
-export default {
-  methods: {
-    route_to({ key }) {
-      if (this.$route.name !== key) {
-        this.$router.push({ name: key });
-      }
+  export default {
+    methods: {
+      route_to({
+        key
+      }) {
+        if (this.$route.name !== key) {
+          this.$router.push({
+            name: key,
+          });
+        }
+      },
     },
-  },
-};
+  };
 </script>
