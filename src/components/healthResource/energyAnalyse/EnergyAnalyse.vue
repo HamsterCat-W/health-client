@@ -198,7 +198,9 @@ export default {
             console.log(response.data.newslist[0]);
             that.data = response.data.newslist[0];
           },
-          function (err) {}
+          function (err) {
+            console.log(err);
+          }
         );
     },
   },

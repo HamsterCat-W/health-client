@@ -68,7 +68,28 @@ export default {
       ],
     };
   },
-  methods: {},
+  methods: {
+    getInfo() {
+      let that = this;
+      axios
+        .get(
+          "/rec/txapi/caipu/index?key=fe429defd907e84df59a15637e39ed24&word=番茄&num=10"
+        )
+        .then(
+          function (response) {
+            // console.log(response);
+            let data = response.data.newslist;
+            that.foodList = data;
+          },
+          function (err) {
+            console.log(err);
+          }
+        );
+    },
+  },
+  mounted() {
+    this.getInfo();
+  },
 };
 </script>
 <style>
