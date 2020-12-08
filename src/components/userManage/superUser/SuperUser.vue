@@ -6,16 +6,11 @@
           placeholder="用户编号"
           enter-button
           @search="onSearch"
+          v-model="userId"
         />
       </a-col>
-      <a-col :span="4" :push="16">
+      <a-col :span="4" :push="18">
         <a-button type="primary" @click="addAdmin">添加管理</a-button>
-        <a-button
-          type="primary"
-          style="margin-left: 10px"
-          @click="() => disabledAdmin()"
-          >冻结管理</a-button
-        >
       </a-col>
     </a-row>
     <a-modal
@@ -75,7 +70,7 @@
       :data-source="data"
       bordered
       style="margin: 10px"
-      rowKey="id"
+      rowKey="userId"
       :row-selection="rowSelection"
     >
       <template
@@ -88,7 +83,7 @@
             v-if="record.editable"
             style="margin: -5px 0"
             :value="text"
-            @change="(e) => handleChange(e.target.value, record.id, col)"
+            @change="(e) => handleChange(e.target.value, record.userId, col)"
           />
           <template v-else>{{ text }}</template>
         </div>
@@ -96,26 +91,24 @@
       <template slot="operation" slot-scope="text, record">
         <div class="editable-row-operations">
           <span v-if="record.editable">
-            <a @click="() => save(record.id)">保存修改</a>
+            <a @click="() => save(record.userId)">保存修改</a>
             <a-popconfirm
               title="Sure to cancel?"
-              @confirm="() => cancel(record.id)"
+              @confirm="() => cancel(record.userId)"
             >
               <a>取消修改</a>
             </a-popconfirm>
           </span>
           <span v-else>
-            <a :disabled="editingKey !== ''" @click="() => edit(record.id)"
+            <a :disabled="editingKey !== ''" @click="() => edit(record.userId)"
               >修改信息</a
             >
             <a
               :disabled="editingKey !== ''"
-              @click="() => deleteItem(record.id)"
+              @click="() => deleteItem(record.userId)"
               >删除</a
             >
-            <a
-              :disabled="editingKey !== ''"
-              @click="() => changestate(record.id)"
+            <a :disabled="editingKey !== ''" @click="() => changestate(record)"
               >修改状态</a
             >
           </span>
@@ -130,13 +123,14 @@
 </template>
 
 <script>
+import axios from "axios";
 const columns = [
   {
     title: "用户编号",
     width: "10%",
     align: "center",
-    dataIndex: "id",
-    scopedSlots: { customRender: "username" },
+    dataIndex: "userId",
+    scopedSlots: { customRender: "userId" },
   },
   {
     title: "用户名",
@@ -170,7 +164,7 @@ const columns = [
     title: "当前状态",
     width: "13%",
     align: "center",
-    dataIndex: "state",
+    dataIndex: "userState",
     scopedSlots: { customRender: "state" },
   },
   {
@@ -183,16 +177,8 @@ const columns = [
 ];
 
 const data = [];
-for (let i = 0; i < 10; i++) {
-  data.push({
-    id: `h1${i}`.toString(),
-    username: `hhh${i} `,
-    password: 12345678,
-    email: "2756878164@qq.com",
-    tel: "1234567890",
-    state: true,
-  });
-}
+
+const url = "http://localhost:9000";
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -217,6 +203,8 @@ export default {
     return {
       data,
       columns,
+      url,
+      userId: "",
       editingKey: "",
       rowSelection,
       visible: false,
@@ -275,37 +263,71 @@ export default {
       },
     };
   },
+  mounted() {
+    this.data = [];
+    let that = this;
+    axios.get(`${url}/user`).then(
+      function (res) {
+        for (let item of res.data) {
+          // console.log(item);
+          if (item.userRole === true) that.data.push(item);
+        }
+      },
+      function (err) {
+        console(err);
+      }
+    );
+  },
   methods: {
-    onSearch() {},
+    onSearch() {
+      let that = this;
+      axios.get(`${this.url}/user/${this.userId}`).then(
+        function (res) {
+          console.log(res);
+          let da = [];
+          da.push(res.data);
+          that.data = da;
+        },
+        function (err) {}
+      );
+    },
     addAdmin() {
       console.log("addAdmin");
       this.visible = true;
     },
-    disabledAdmin() {
-      console.log("冻结用户");
-      this.$message.success("冻结成功", 10);
-    },
     handleOk() {
       // console.log("Clicked ok button");
-      // console.log(this.addUserInfo);
       let id = this.addUserInfo.userId;
-      let name = this.addUserInfo.userNickname;
+      let name = this.addUserInfo.userName;
       let password = this.addUserInfo.password;
       let email = this.addUserInfo.userEmail;
       let tel = this.addUserInfo.userTel;
       let state = Boolean(Number(this.addUserInfo.userState));
-      console.log(typeof state);
-      console.log(state);
 
       let user = {
-        id: id,
+        userId: id,
         username: name,
         password: password,
         email: email,
         tel: tel,
-        state: state,
+        userState: state,
+        userRole: true,
       };
-      this.data.push(user);
+
+      let that = this;
+      axios.post(`${url}/user/add`, user).then(
+        function (res) {
+          // console.log(res);
+          if (res.data === 1) {
+            that.$message.success("添加成功", 10);
+          } else {
+            that.$message.success("添加失败", 10);
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
       // console.log(this.userInfoList);
       this.confirmLoading = true;
       setTimeout(() => {
@@ -317,7 +339,6 @@ export default {
         this.addUserInfo.userEmail = "";
         (this.addUserInfo.userTel = ""), (this.addUserInfo.userState = "");
       }, 2000);
-      this.$message.success("添加成功", 10);
     },
     handleCancel() {
       console.log("Clicked cancel button");
@@ -325,7 +346,7 @@ export default {
     },
     handleChange(value, key, column) {
       const newData = [...this.data];
-      const target = newData.filter((item) => key === item.id)[0];
+      const target = newData.filter((item) => key === item.userId)[0];
       if (target) {
         target[column] = value;
         this.data = newData;
@@ -334,8 +355,8 @@ export default {
     edit(key) {
       const newData = [...this.data];
       // console.log(newData);
-      const target = newData.filter((item) => key === item.id)[0];
-      console.log(target);
+      const target = newData.filter((item) => key === item.userId)[0];
+      // console.log(target);
       this.editingKey = key;
       if (target) {
         target.editable = true;
@@ -343,35 +364,84 @@ export default {
       }
     },
     deleteItem(key) {
-      console.log(key);
-      this.$message.success("删除成功", 10);
+      // console.log(key);
+      let that = this;
+      axios.delete(`${url}/user/delete/${key}`).then(
+        function (res) {
+          // console.log(res.data);
+          if (res.data === 1) {
+            that.$message.success("删除成功", 10);
+          } else {
+            that.$message.error("删除失败", 10);
+          }
+        },
+        function (err) {}
+      );
     },
     changestate(key) {
-      console.log(key);
-      this.$message.success("修改成功", 10);
+      // console.log(key);
+      let that = this;
+      let id = key.userId;
+      let name = key.username;
+      let password = key.password;
+      let email = key.email;
+      let tel = key.tel;
+      let state = !key.userState;
+      let role = key.userRole;
+
+      let user = {
+        userId: id,
+        username: name,
+        password: password,
+        email: email,
+        tel: tel,
+        userState: state,
+        userRole: role,
+      };
+
+      // console.log(user);
+
+      axios.put(`${url}/user/update`, user).then(
+        function (res) {
+          console.log(res.data);
+          if (res.data === 1) {
+            that.$message.success("用户状态已更改", 10);
+          } else {
+            that.$message.error("用户状态更改失败", 10);
+          }
+        },
+        function (ree) {}
+      );
     },
     save(key) {
       const newData = [...this.data];
-      const newCacheData = [...this.cacheData];
-      const target = newData.filter((item) => key === item.id)[0];
-      const targetCache = newCacheData.filter((item) => key === item.id)[0];
-      if (target && targetCache) {
-        delete target.editable;
-        this.data = newData;
-        Object.assign(targetCache, target);
-        this.cacheData = newCacheData;
-      }
-      this.editingKey = "";
-      this.$message.success("修改成功", 10);
+      const target = newData.filter((item) => key === item.userId)[0];
+      // console.log(target);
+      let that = this;
+      axios.put(`${url}/user/update`, target).then(
+        function (res) {
+          // console.log(res.data);
+          if (res.data === 1) {
+            that.editingKey = "";
+            that.$message.success("修改成功", 10);
+          } else {
+            that.$message.error("修改失败", 10);
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
+      delete target.editable;
     },
     cancel(key) {
       const newData = [...this.data];
-      const target = newData.filter((item) => key === item.id)[0];
+      const target = newData.filter((item) => key === item.userId)[0];
       this.editingKey = "";
       if (target) {
         Object.assign(
           target,
-          this.cacheData.filter((item) => key === item.id)[0]
+          this.cacheData.filter((item) => key === item.userId)[0]
         );
         delete target.editable;
         this.data = newData;

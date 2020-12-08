@@ -3,7 +3,7 @@
     <a-row style="margin: 30px">
       <a-col :span="4">
         <a-input-search
-          placeholder="日记日期"
+          placeholder="日记编号"
           enter-button
           @search="onSearch"
         />
@@ -13,7 +13,7 @@
       </a-col>
     </a-row>
     <a-modal
-      title="添加管理"
+      title="添加日记"
       :visible="visible"
       :confirm-loading="confirmLoading"
       @ok="handleOk"
@@ -278,7 +278,7 @@ export default {
         this.confirmLoading = false;
         this.addUserInfo.diaryId = "";
         this.addUserInfo.diaryDate = "";
-        this.addUserInfo.diaryTitle= "";
+        this.addUserInfo.diaryTitle = "";
         this.addUserInfo.diaryContent = "";
         this.addUserInfo.diaryState = "";
       }, 2000);
